@@ -13,12 +13,13 @@ services:
       - SINGLE_USER_CREDENTIALS_USERNAME=admin
       - SINGLE_USER_CREDENTIALS_PASSWORD=adminpassword
     volumes:
-      - nifi_conf:/opt/nifi/nifi-current/conf
-      - nifi_content:/opt/nifi/nifi-current/content_repository
-      - nifi_database:/opt/nifi/nifi-current/database_repository
-      - nifi_flowfile:/opt/nifi/nifi-current/flowfile_repository
-      - nifi_provenance:/opt/nifi/nifi-current/provenance_repository
-      - nifi_state:/opt/nifi/nifi-current/state
+      - ./volumes/nifi/jdbc:/opt/jdbc
+      - ./volumes/nifi/data:/opt/nifi/data
+      - ./volumes/nifi/properties:/opt/nifi/nifi-current/properties  #credentials.properties
+      - ./volumes/nifi/database_repository:/opt/nifi/nifi-current/database_repository
+      - ./volumes/nifi/flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
+      - ./volumes/nifi/content_repository:/opt/nifi/nifi-current/content_repository
+      - ./volumes/nifi/provenance_repository:/opt/nifi/nifi-current/provenance_repository
     networks:
       - data_network
 
@@ -33,7 +34,7 @@ services:
       - NIFI_REGISTRY_WEB_HTTP_PORT=18080
       - NIFI_REGISTRY_WEB_HTTP_HOST=0.0.0.0
     volumes:
-      - nifi_registry_data:/opt/nifi-registry/nifi-registry-current
+      - ./volumes/nifi-registry/nifi.properties:/nifi.properties
     networks:
       - data_network
 
@@ -48,7 +49,7 @@ services:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
     volumes:
-      - minio_data:/data
+      - ./volumes/minio/nifi.properties:/nifi.properties
     command: server /data --console-address ":9001"
     networks:
       - data_network
@@ -63,7 +64,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/data/postgres
+      - ./volumes/postgres/nifi.properties:/nifi.properties
     restart: unless-stopped
 
   pgadmin4:
